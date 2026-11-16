@@ -1,0 +1,44 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnRecognizedIntent
+  id: main
+  intent:
+    displayName: Escalate to on-call
+    triggerQueries:
+      - page the on-call team
+      - escalate a certificate issue
+      - I need a human for a certificate problem
+      - who do I call about an expiring certificate
+      - contact the platform team
+
+  actions:
+    - kind: Question
+      id: askService
+      variable: Topic.Service
+      prompt: Which service's certificate is affected?
+      entity: StringPrebuiltEntity
+
+    - kind: Question
+      id: askUrgent
+      variable: Topic.IsUrgent
+      prompt: Does it expire within 7 days, or has it already expired?
+      entity: BooleanPrebuiltEntity
+
+    - kind: ConditionGroup
+      id: checkUrgency
+      conditions:
+        - id: urgent
+          condition: =Topic.IsUrgent = true
+          actions:
+            - kind: SendActivity
+              id: sendEmergency
+              activity: |-
+                This is an emergency renewal for {Topic.Service}:
+                1. Page the platform on-call through the PagerDuty service **platform-oncall**.
+                2. Raise an emergency change; the duty manager approves it.
+                3. Renew within 4 hours, following the emergency renewal runbook.
+      elseActions:
+        - kind: SendActivity
+          id: sendStandard
+          activity: |-
+            This is a standard renewal for {Topic.Service}. Tell the owning team in its channel and raise a change ticket for the next Change Advisory Board meeting (Tuesdays). See the standard renewal runbook.

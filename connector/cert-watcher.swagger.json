@@ -1,0 +1,56 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "cert-watcher",
+    "description": "Read-only TLS certificate expiry status from a cert-watcher deployment.",
+    "version": "1.0"
+  },
+  "host": "REPLACE-WITH-YOUR-CERT-WATCHER-HOST",
+  "basePath": "/",
+  "schemes": ["https"],
+  "produces": ["application/json"],
+  "paths": {
+    "/api/v1/certificates": {
+      "get": {
+        "operationId": "ListCertificates",
+        "summary": "List certificate status",
+        "description": "Returns the latest expiry check for every watched certificate. Filter by severity, for example CRITICAL for certificates that expire within 7 days.",
+        "parameters": [
+          {
+            "name": "severity",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": ["OK", "WARNING", "CRITICAL", "EXPIRED", "ERROR"],
+            "x-ms-summary": "Severity",
+            "description": "OK, WARNING (within 30 days), CRITICAL (within 7 days), EXPIRED, or ERROR (could not be checked). Omit for all certificates."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Certificate statuses",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/CertificateStatus" }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CertificateStatus": {
+      "type": "object",
+      "properties": {
+        "target": { "type": "string", "x-ms-summary": "Target", "description": "Endpoint (host:port) or certificate file path." },
+        "subject": { "type": "string", "x-ms-summary": "Subject" },
+        "issuer": { "type": "string", "x-ms-summary": "Issuer" },
+        "notAfter": { "type": "string", "format": "date-time", "x-ms-summary": "Expires at" },
+        "daysUntilExpiry": { "type": "integer", "format": "int64", "x-ms-summary": "Days until expiry" },
+        "severity": { "type": "string", "x-ms-summary": "Severity" },
+        "error": { "type": "string", "x-ms-summary": "Error", "description": "Why the check failed, when severity is ERROR." }
+      }
+    }
+  },
+  "securityDefinitions": {}
+}

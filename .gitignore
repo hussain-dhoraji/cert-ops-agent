@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Eval output and demo certificates
+evals/results/
+demo/certs/
+
+# Never commit agent secrets
+.env

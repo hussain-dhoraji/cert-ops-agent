@@ -1,0 +1,19 @@
+[project]
+name = "certops-eval"
+version = "0.1.0"
+description = "Evaluation harness for the Cert Ops Assistant Copilot Studio agent"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+pythonpath = ["evals"]
+testpaths = ["evals/tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["certops_eval"]

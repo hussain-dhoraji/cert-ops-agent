@@ -1,0 +1,11 @@
+kind: AdaptiveDialog
+beginDialog:
+  kind: OnConversationStart
+  id: main
+  actions:
+    - kind: SendActivity
+      id: sendGreeting
+      activity: |-
+        Hi, I'm Cert Ops Assistant. I can tell you which TLS certificates are expiring, walk you through the renewal runbooks, and point you to the owning team.
+
+        Try: "What expires in the next 30 days?" or "The payments gateway certificate is critical. What do I do?"
