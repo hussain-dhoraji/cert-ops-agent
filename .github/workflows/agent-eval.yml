@@ -1,0 +1,42 @@
+name: Agent evaluation
+
+# Runs the golden set against the published agent: on demand (e.g. after changing instructions) and weekly,
+# to catch regressions when Microsoft updates the underlying model.
+on:
+  workflow_dispatch:
+    inputs:
+      label:
+        description: What is being evaluated, e.g. instructions-v2
+        required: true
+        default: manual
+  schedule:
+    - cron: "0 13 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    name: Run golden set against the agent
+    runs-on: ubuntu-latest
+    # Skips cleanly until the agent is published and the secret is configured.
+    if: vars.AGENT_EVAL_ENABLED == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Evaluate
+        env:
+          COPILOT_TOKEN_ENDPOINT: ${{ secrets.COPILOT_TOKEN_ENDPOINT }}
+          DIRECTLINE_DOMAIN: ${{ vars.DIRECTLINE_DOMAIN || 'https://directline.botframework.com' }}
+          LABEL: ${{ inputs.label || 'weekly' }}
+        working-directory: evals
+        run: python -m certops_eval.run --label "$LABEL" --out "results/$LABEL.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eval-results
+          path: evals/results/
