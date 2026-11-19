@@ -7,7 +7,7 @@
 # Re-run it before an evaluation so the day counts stay in range.
 set -euo pipefail
 
-image="${CERT_WATCHER_IMAGE:-ghcr.io/hussain-md/cert-watcher:latest}"
+image="${CERT_WATCHER_IMAGE:-ghcr.io/hussain-dhoraji/cert-watcher:latest}"
 dir="$(cd "$(dirname "$0")" && pwd)/certs"
 mkdir -p "$dir"
 
@@ -24,7 +24,7 @@ make_cert internal-wiki 200
 docker rm -f cert-watcher-demo >/dev/null 2>&1 || true
 docker run -d --name cert-watcher-demo -p 8080:8080 \
   -v "$dir:/certs:ro" \
-  -e CERT_WATCHER_CERTIFICATEFILES=/certs/payments-gateway.crt,/certs/customer-portal.crt,/certs/internal-wiki.crt \
+  -e CERT_WATCHER_CERTIFICATE_FILES=/certs/payments-gateway.crt,/certs/customer-portal.crt,/certs/internal-wiki.crt \
   -e CERT_WATCHER_ENDPOINTS=expired.badssl.com \
   "$image"
 
