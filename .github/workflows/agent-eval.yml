@@ -35,7 +35,7 @@ jobs:
           LABEL: ${{ inputs.label || 'weekly' }}
         working-directory: evals
         run: python -m certops_eval.run --label "$LABEL" --out "results/$LABEL.json"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: eval-results
