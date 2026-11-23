@@ -13,7 +13,7 @@ jobs:
     name: Lint and unit-test the eval harness
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -28,7 +28,7 @@ jobs:
     name: Validate agent artifacts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Connector is valid JSON in Swagger 2.0 form
         run: jq -e '.swagger == "2.0" and (.paths | length > 0)' connector/cert-watcher.swagger.json
       - name: Topic files are valid YAML
